@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-CristiMaven</actionName>
+            <displayName>CristiMaven</displayName>
+            <goals>
+                <goal>clean:clean</goal>
+                <goal>install:install</goal>
+            </goals>
+        </action>
+    </actions>
