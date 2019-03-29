@@ -77,16 +77,16 @@ public class TestPsdeTireClusterDO {
         mapCluster1GroupedByWltpId1 = cluster1.stream().collect(Collectors.groupingBy(PsdeTireClusterDO::getWltpId));
         mapCluster1GroupedByWltpId2 = cluster2.stream().collect(Collectors.groupingBy(PsdeTireClusterDO::getWltpId));
         
-        System.out.println(mapCluster1GroupedByWltpId1);
-        System.out.println(mapCluster1GroupedByWltpId2);
+//        System.out.println(mapCluster1GroupedByWltpId1);
+//        System.out.println(mapCluster1GroupedByWltpId2);
           
         /*
-            Merge cluster maps into a single map
+            Merge cluster maps into a single map - in the code, this step is already done - we recieve a map with maps merged
         */
         Map<Integer, List<PsdeTireClusterDO>> mergedMap = new LinkedHashMap<>();
         mergedMap.putAll(mapCluster1GroupedByWltpId1);
         mergedMap.putAll(mapCluster1GroupedByWltpId2);                
-        System.out.println(mergedMap);
+//        System.out.println(mergedMap);
         
         /*
             Set cluster indexes. Get max number of clusters in table
@@ -115,9 +115,9 @@ public class TestPsdeTireClusterDO {
         */
         Map<Integer, List<PsdeTireClusterDO>> finalEntry = listTireClusters.stream().collect(Collectors.groupingBy(PsdeTireClusterDO::getClusterIndexNumber));
         
-        System.out.println("Merged entry: " + mergedMap);              
-        System.out.println("List tire clusters: " + listTireClusters);
-        System.out.println("Final Entry: " + finalEntry);
+//        System.out.println("Merged entry: " + mergedMap);              
+//        System.out.println("List tire clusters: " + listTireClusters);
+//        System.out.println("Final Entry: " + finalEntry);
         
         /*
             Testing to see if they were grouped as expected
@@ -128,6 +128,16 @@ public class TestPsdeTireClusterDO {
         assertEquals(finalEntry.get(0).get(1).getCo2Ausser(), "245.5");
         assertEquals(finalEntry.get(1).get(0).getCo2Ausser(), "146.5");
         assertEquals(finalEntry.get(1).get(1).getCo2Ausser(), "345.5");
+               
+        List<TableTireCluster> tableClustersList = new ArrayList<>();
+        
+        for(Map.Entry<Integer, List<PsdeTireClusterDO>> entry: finalEntry.entrySet()) {
+            tableClustersList.add(new TableTireCluster(entry.getValue()));
+        }
+                      
+        for (TableTireCluster cluster: tableClustersList) {
+            System.out.println(cluster.test());
+        }
     }
     
     public class PsdeTireClusterDO {
@@ -191,4 +201,135 @@ public class TestPsdeTireClusterDO {
         }
     }
     
+    public class TableTireCluster {
+        private int tireClusterId;
+        private List<PsdeTireClusterDO> tireClusterEntry;
+        private TableRow tableRowCO2Inner = new TableRow();
+        private TableRow tableRowCO2Ausser = new TableRow();
+        private TableRow tableRowCO2Comb = new TableRow();
+        
+        public TableTireCluster() {}
+        
+        public TableTireCluster(int tableTireClusterId) {
+            this.tireClusterId = tableTireClusterId;
+        }
+        
+        public TableTireCluster(List<PsdeTireClusterDO> tireClusterEntry) {
+            this.tireClusterEntry = tireClusterEntry;
+        }
+
+        public int getTireClusterId() {
+            return tireClusterId;
+        }
+
+        public void setTireClusterId(int tireClusterId) {
+            this.tireClusterId = tireClusterId;
+        }
+
+        public List<PsdeTireClusterDO> getTireClusterEntry() {
+            return tireClusterEntry;
+        }
+
+        public void setTireClusterEntry(List<PsdeTireClusterDO> tireClusterEntry) {
+            this.tireClusterEntry = tireClusterEntry;
+        }              
+        
+        public TableRow getTableRowCO2Inner() {
+            return tableRowCO2Inner;
+        }
+
+        public void setTableRowCO2Inner(TableRow tableRowCO2Inner) {
+            this.tableRowCO2Inner = tableRowCO2Inner;
+        }
+
+        public TableRow getTableRowCO2Ausser() {
+            return tableRowCO2Ausser;
+        }
+
+        public void setTableRowCO2Ausser(TableRow tableRowCO2Ausser) {
+            this.tableRowCO2Ausser = tableRowCO2Ausser;
+        }
+
+        public TableRow getTableRowCO2Comb() {
+            return tableRowCO2Comb;
+        }
+
+        public void setTableRowCO2Comb(TableRow tableRowCO2Comb) {
+            this.tableRowCO2Comb = tableRowCO2Comb;
+        }
+        
+        public String test() {
+            return this.tireClusterEntry.toString();
+        }
+
+        @Override
+        public String toString() {
+            return "TableTireCluster{" + "tableRowCO2Inner=" + tableRowCO2Inner + ", tableRowCO2Ausser=" + tableRowCO2Ausser + ", tableRowCO2Comb=" + tableRowCO2Comb + '}';
+        }                
+    }
+    
+    public class TableRow {
+        private String categoryName;
+        private List<RowCell> rowCells = new ArrayList<>();
+        private Map<String, List<RowCell>> categoryNameAndValues;
+        
+        public TableRow() {}
+        
+        public TableRow(String categoryName, List<RowCell> rowCells) {
+            this.categoryName = categoryName;
+            this.rowCells = rowCells;
+        }
+
+        public String getCategoryName() {
+            return categoryName;
+        }
+
+        public void setCategoryName(String categoryName) {
+            this.categoryName = categoryName;
+        }
+                
+        public List<RowCell> getRowCells() {
+            return rowCells;
+        }
+
+        public void setRowCells(List<RowCell> rowCells) {
+            this.rowCells = rowCells;
+        }
+
+        public Map<String, List<RowCell>> getCategoryNameAndValues() {
+            return categoryNameAndValues;
+        }
+
+        public void setCategoryNameAndValues(Map<String, List<RowCell>> categoryNameAndValues) {
+            this.categoryNameAndValues = categoryNameAndValues;
+        }
+
+        @Override
+        public String toString() {
+            return "TableRow{" + "categoryName=" + categoryName + ", rowCells=" + rowCells + ", categoryNameAndValues=" + categoryNameAndValues + '}';
+        }
+        
+        
+    }
+    
+    public class RowCell {
+        String value;
+        
+        public RowCell(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }  
+
+        @Override
+        public String toString() {
+            return "RowCell{" + "value=" + value + '}';
+        }                
+    }
 }
